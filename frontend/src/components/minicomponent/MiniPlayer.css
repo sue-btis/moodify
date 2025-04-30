@@ -1,0 +1,97 @@
+.mini-player {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: #1e1e1e;
+    color: white;
+    display: flex;
+    align-items: center;
+    padding: 0.8rem 1.2rem;
+    border-top: 1px solid #333;
+    z-index: 1000;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.4);
+    gap: 1rem;
+}
+
+.mini-player__cover {
+    height: 60px;
+    width: 60px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.mini-player__info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    gap: 0.3rem;
+}
+
+.mini-player__meta {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: flex;
+    flex-direction: column;
+}
+
+.mini-player__title {
+    font-size: 1rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mini-player__artist {
+    font-size: 0.85rem;
+    color: #b3b3b3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mini-player__progress-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: #aaa;
+}
+
+.bar-track {
+    flex: 1;
+    height: 4px;
+    background: #444;
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    background: #1db954;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.mini-player__controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.mini-player__btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.mini-player__btn:hover {
+    color: #1db954;
+}

@@ -1,0 +1,70 @@
+import React, { useState, useEffect } from "react";
+import "./MiniPlayer.css";
+import {
+    FaPlay,
+    FaPause,
+    FaStepForward,
+    FaStepBackward
+} from "react-icons/fa";
+
+const MiniPlayer = () => {
+    const [track, setTrack] = useState(null);
+    const [isPlaying, setIsPlaying] = useState(false);
+
+    const fetchCurrent = async () => {
+        try {
+            const res = await fetch("http://localhost:8080/spotify/current", {
+                credentials: "include",
+            });
+            if (!res.ok) return;
+            const data = await res.json();
+            setTrack(data.item);
+            setIsPlaying(data.is_playing);
+        } catch (e) {
+            console.error("Error al obtener reproducción actual", e);
+        }
+    };
+
+    const togglePlayback = async () => {
+        try {
+            await fetch(`http://localhost:8080/spotify/${isPlaying ? "pause" : "resume"}`, {
+                method: "POST",
+                credentials: "include",
+            });
+            setIsPlaying(!isPlaying);
+        } catch (e) {
+            console.error("Error al cambiar estado de reproducción", e);
+        }
+    };
+
+    useEffect(() => {
+        fetchCurrent();
+        const interval = setInterval(() => {
+            fetchCurrent();
+        }, 5000);
+        return () => clearInterval(interval);
+    }, []);
+
+    if (!track) return null;
+
+    return (
+        <div className="mini-player">
+            <img src={track.album.images[0].url} alt="cover" className="mini-player__cover" />
+            <div className="mini-player__info">
+                <strong className="mini-player__title">{track.name}</strong>
+                <small className="mini-player__artist">
+                    {track.artists.map((a) => a.name).join(", ")}
+                </small>
+            </div>
+            <div className="mini-player__controls">
+                <button className="mini-player__btn"><FaStepBackward /></button>
+                <button className="mini-player__btn" onClick={togglePlayback}>
+                    {isPlaying ? <FaPause /> : <FaPlay />}
+                </button>
+                <button className="mini-player__btn"><FaStepForward /></button>
+            </div>
+        </div>
+    );
+};
+
+export default MiniPlayer;

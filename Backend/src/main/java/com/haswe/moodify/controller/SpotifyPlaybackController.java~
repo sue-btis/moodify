@@ -1,0 +1,145 @@
+package com.haswe.moodify.controller;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
+
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/spotify")
+@RequiredArgsConstructor
+public class SpotifyPlaybackController {
+
+    private final WebClient webClient = WebClient.create("https://api.spotify.com");
+
+    @Autowired
+    private OAuth2AuthorizedClientManager authorizedClientManager;
+
+    private String getAccessToken(OAuth2AuthenticationToken authentication) {
+        OAuth2AuthorizeRequest request = OAuth2AuthorizeRequest
+                .withClientRegistrationId("spotify")
+                .principal(authentication)
+                .build();
+        OAuth2AuthorizedClient client = authorizedClientManager.authorize(request);
+        if (client == null) throw new RuntimeException("Authorization failed.");
+        return client.getAccessToken().getTokenValue();
+    }
+
+    @PostMapping("/queue")
+    public Mono<String> queueSong(
+            OAuth2AuthenticationToken authentication,
+            @RequestParam String uri) {
+        String accessToken = getAccessToken(authentication);
+
+        return webClient.post()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/v1/me/player/queue")
+                        .queryParam("uri", uri)
+                        .build())
+                .headers(headers -> headers.setBearerAuth(accessToken))
+                .retrieve()
+                .bodyToMono(String.class)
+                .defaultIfEmpty("✅ Canción agregada a la cola del dispositivo activo.");
+    }
+
+    @PostMapping("/play")
+    public Mono<String> playTrack(
+            OAuth2AuthenticationToken auth,
+            @RequestParam String uri
+    ) {
+        String accessToken = getAccessToken(auth);
+
+        Map<String, Object> body;
+        if (uri.startsWith("spotify:track:")) {
+            body = Map.of("uris", List.of(uri));
+        } else if (uri.startsWith("spotify:playlist:")) {
+            body = Map.of("context_uri", uri);
+        } else {
+            return Mono.error(new IllegalArgumentException("Tipo de URI no soportado: " + uri));
+        }
+
+        return webClient.put()
+                .uri("/v1/me/player/play")
+                .headers(headers -> headers.setBearerAuth(accessToken))
+                .bodyValue(body)
+                .retrieve()
+                .bodyToMono(String.class)
+                .defaultIfEmpty("▶️ Reproducción iniciada.");
+    }
+
+    @PostMapping("/pause")
+    public Mono<String> pausePlayback(OAuth2AuthenticationToken auth) {
+        String token = getAccessToken(auth);
+        return webClient.put()
+                .uri("/v1/me/player/pause")
+                .headers(h -> h.setBearerAuth(token))
+                .retrieve()
+                .bodyToMono(String.class)
+                .defaultIfEmpty("⏸️ Reproducción pausada.");
+    }
+
+    @PostMapping("/resume")
+    public Mono<String> resumePlayback(OAuth2AuthenticationToken auth) {
+        String token = getAccessToken(auth);
+        return webClient.put()
+                .uri("/v1/me/player/play")
+                .headers(h -> h.setBearerAuth(token))
+                .retrieve()
+                .bodyToMono(String.class)
+                .defaultIfEmpty("▶️ Reproducción reanudada.");
+    }
+
+    @PostMapping("/next")
+    public Mono<String> nextTrack(OAuth2AuthenticationToken auth) {
+        String token = getAccessToken(auth);
+        return webClient.post()
+                .uri("/v1/me/player/next")
+                .headers(h -> h.setBearerAuth(token))
+                .retrieve()
+                .bodyToMono(String.class)
+                .defaultIfEmpty("⏭️ Siguiente canción.");
+    }
+
+    @PostMapping("/previous")
+    public Mono<String> previousTrack(OAuth2AuthenticationToken auth) {
+        String token = getAccessToken(auth);
+        return webClient.post()
+                .uri("/v1/me/player/previous")
+                .headers(h -> h.setBearerAuth(token))
+                .retrieve()
+                .bodyToMono(String.class)
+                .defaultIfEmpty("⏮️ Canción anterior.");
+    }
+
+    @GetMapping("/devices")
+    public Mono<String> getDevices(OAuth2AuthenticationToken authentication) {
+        String accessToken = getAccessToken(authentication);
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/v1/me/player/devices")
+                        .build())
+                .headers(headers -> headers.setBearerAuth(accessToken))
+                .retrieve()
+                .bodyToMono(String.class);
+    }
+
+    @GetMapping("/current")
+    public Mono<Map<String, Object>> getCurrentPlayback(OAuth2AuthenticationToken auth) {
+        String token = getAccessToken(auth);
+        return webClient.get()
+                .uri("/v1/me/player/currently-playing")
+                .headers(h -> h.setBearerAuth(token))
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<>() {});
+    }
+}
+

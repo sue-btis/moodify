@@ -1,0 +1,43 @@
+import React,{ useState,useEffect} from "react";
+import "./MiniComponent.css"
+import { FaPlay, FaPause, FaStepForward, FaStepBackward } from 'react-icons/fa';
+
+
+const MiniComponent = () => {
+
+    const [track , setTrack] = useState(null);
+    const [isPlaying, setIsPlaying] = useState(false);
+    const fetchCurrent = async () => {
+        try {
+            const res = await fetch("http://localhost:8080/spotify/current", {
+                credentials: "include"
+            });
+            if (!res.ok) return;
+            const data = await res.json();
+            setTrack(data.item);
+            setIsPlaying(data.is_playing);
+        } catch (e) {
+            console.error("Error al obtener reproducción actual", e);
+        }
+    }
+
+    useEffect(() => {
+        fetchCurrent();
+        const interval = setInterval(() => {
+            fetchCurrent();
+        }, 5000);
+        return () => clearInterval(interval);
+    }, []);
+    if(!track) return <div></div>
+
+    return (
+       <div className="mini-player">
+           <img src={track.album.images[0].url} alt="cover" />
+           <div className="mini-player__info">
+               
+           </div>
+       </div>
+    )
+}
+
+export default MiniComponent

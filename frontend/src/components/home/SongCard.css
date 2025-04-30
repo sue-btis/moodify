@@ -1,0 +1,82 @@
+.song-card {
+    display: flex;
+    flex-direction: column;
+    background-color: #181818;
+    border-radius: 1rem;
+    overflow: hidden;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    width: 200px;
+}
+
+.song-card:hover {
+    background-color: #282828;
+    transform: scale(1.03);
+}
+
+.song-card__image-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+}
+
+.song-card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.song-card__actions {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    gap: 1rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.song-card:hover .song-card__actions {
+    opacity: 1;
+}
+
+.song-card__icon-button {
+    background-color: #1db954;
+    border: none;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: black;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s ease;
+}
+
+.song-card__icon-button:hover {
+    transform: scale(1.1);
+}
+
+.song-card__info {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.song-card__title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: white;
+}
+
+.song-card__artist {
+    font-size: 0.95rem;
+    color: #b3b3b3;
+}

@@ -1,0 +1,28 @@
+.genre-selector {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    justify-content: center;
+}
+
+.genre-selector__button {
+    padding: 0.5rem 1rem;
+    background-color: #2a2a2a;
+    border: none;
+    border-radius: 20px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    font-size: 0.9rem;
+    text-transform: capitalize;
+}
+
+.genre-selector__button:hover {
+    background-color: #3a3a3a;
+}
+
+.genre-selector__button--active {
+    background-color: #1db954;
+    color: black;
+}
