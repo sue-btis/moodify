@@ -1,4 +1,0 @@
-package com.haswe.moodify.exception;
-
-public class GlobalExceptionHandler {
-}
