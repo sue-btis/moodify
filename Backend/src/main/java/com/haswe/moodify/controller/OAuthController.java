@@ -2,8 +2,9 @@ package com.haswe.moodify.controller;
 
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.oauth2.client.OAuth2AuthorizeRequest;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,47 +14,46 @@ import reactor.core.publisher.Mono;
 
 //Devolver el token del usuario usando OAuth2
 // Controlador tipo REST que devuelve un JSON
-@RestController
 @RequiredArgsConstructor
+@RestController
 public class OAuthController {
 
-    //Atributo para aceder al AccessToken, PrincipalName, RefreshToken  y ClientRegistration
-    @Autowired
-    private final OAuth2AuthorizedClientService authorizedClientService;
+    private final OAuth2AuthorizedClientManager authorizedClientManager;
 
-    private final WebClient webclient = WebClient.create("https://api.spotify.com");
+    private final WebClient webClient = WebClient.create("https://api.spotify.com");
 
     @GetMapping("/user/profile")
     public Mono<String> getUserProfile(OAuth2AuthenticationToken authentication) {
-        //obtener info del usuario autorizado
-        OAuth2AuthorizedClient client =
-                authorizedClientService.loadAuthorizedClient(
-                        authentication.getAuthorizedClientRegistrationId(),
-                        authentication.getName()
-                );
+        OAuth2AuthorizeRequest authorizeRequest = OAuth2AuthorizeRequest
+                .withClientRegistrationId("spotify")
+                .principal(authentication)
+                .build();
 
-        //obtener el token
-        String accessToken = client.getAccessToken().getTokenValue();
+        OAuth2AuthorizedClient client = authorizedClientManager.authorize(authorizeRequest);
+        if (client == null) throw new RuntimeException("Token no válido o sesión expirada");
 
-        //peticion a la api para obtener el perfil
-        return webclient
+        String token = client.getAccessToken().getTokenValue();
+
+        return webClient
                 .get()
                 .uri("/v1/me")
-                .headers(header -> header.setBearerAuth(accessToken))
+                .headers(headers -> headers.setBearerAuth(token))
                 .retrieve()
                 .bodyToMono(String.class);
     }
 
     @GetMapping("/user/token")
     public String getToken(OAuth2AuthenticationToken authentication) {
-        OAuth2AuthorizedClient client = authorizedClientService
-                .loadAuthorizedClient(
-                        authentication.getAuthorizedClientRegistrationId(),
-                        authentication.getName());
+        OAuth2AuthorizeRequest authorizeRequest = OAuth2AuthorizeRequest
+                .withClientRegistrationId("spotify")
+                .principal(authentication)
+                .build();
+
+        OAuth2AuthorizedClient client = authorizedClientManager.authorize(authorizeRequest);
+        if (client == null) return "No autorizado";
 
         return "Access Token: " + client.getAccessToken().getTokenValue();
     }
-
 }
 
 

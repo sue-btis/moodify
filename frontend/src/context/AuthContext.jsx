@@ -1,6 +1,5 @@
-import {createContext, useContext, useEffect, useState} from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
-//contexto para guardar el token
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -9,9 +8,10 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         fetch("http://localhost:8080/user/token", {
-            credentials: "include",
+            method: "GET",
+            credentials: "include", // 👈 Importante: enviar cookies de sesión
         })
-            .then((res) => {
+            .then(res => {
                 setAuthenticated(res.ok);
                 setLoading(false);
             })
