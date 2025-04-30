@@ -1,0 +1,5 @@
+# Archivos temporales
+*~
+*.swp
+*.tmp
+*.env
