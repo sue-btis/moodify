@@ -112,7 +112,7 @@ const HomePage = () => {
                                 <p className="no-results">Results not found for this combination</p>
                             )}
                             <SongList songs={songs} />
-                            {hasMore && !loading && (
+                            {songs.length > 0 && hasMore && (
                                 <div className="load-more-wrapper">
                                     <button onClick={() => fetchSongs(false)} className="load-more-btn">
                                         Load More
