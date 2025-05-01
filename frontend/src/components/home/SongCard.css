@@ -7,7 +7,10 @@
     transition: transform 0.3s ease, background-color 0.3s ease;
     cursor: pointer;
     position: relative;
-    width: 200px;
+    width: 100%;
+    max-width: unset;
+    flex: 0 0 auto;
+
 }
 
 .song-card:hover {
@@ -35,9 +38,10 @@
     left: 50%;
     transform: translate(-50%, -50%);
     display: flex;
-    gap: 1rem;
+    gap: 0.8rem;
     opacity: 0;
     transition: opacity 0.3s ease;
+    z-index: 2;
 }
 
 .song-card:hover .song-card__actions {
@@ -64,19 +68,31 @@
 }
 
 .song-card__info {
-    padding: 1rem;
+    padding: 0.8rem;
     display: flex;
     flex-direction: column;
     gap: 0.3rem;
 }
 
 .song-card__title {
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 600;
-    color: white;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .song-card__artist {
-    font-size: 0.95rem;
-    color: #b3b3b3;
+    font-size: 0.85rem;
+    color: #aaa;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
+
+
+
+
+
+

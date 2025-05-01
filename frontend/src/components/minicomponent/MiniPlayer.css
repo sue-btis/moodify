@@ -1,5 +1,6 @@
 .mini-player {
-    position: fixed;
+    position: absolute;
+    height: 90px;
     bottom: 0;
     width: 100%;
     background: #1e1e1e;
@@ -78,20 +79,97 @@
 }
 
 .mini-player__controls {
+    position: absolute;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
     align-items: center;
     gap: 1rem;
+    z-index: 2;
+    background: #2c2c2c;
+    padding: 0.5rem 1rem;
+    border-radius: 40px;
 }
 
 .mini-player__btn {
     background: none;
     border: none;
     color: white;
-    font-size: 1.1rem;
+    font-size: 1.3rem;
     cursor: pointer;
+    margin: 0 1rem;
     transition: color 0.2s;
 }
 
 .mini-player__btn:hover {
     color: #1db954;
 }
+
+@media (max-width: 780px) {
+    .mini-player {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        height: 80px;
+        padding: 0.5rem 1rem;
+        gap: 1rem;
+    }
+
+    .mini-player__cover {
+        height: 48px;
+        width: 48px;
+        flex-shrink: 0;
+        border-radius: 6px;
+    }
+
+    .mini-player__info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    .mini-player__meta {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    .mini-player__title {
+        font-size: 0.95rem;
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .mini-player__artist {
+        font-size: 0.8rem;
+        color: #b3b3b3;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .mini-player__controls {
+        position: static;
+        transform: none;
+        background: transparent;
+        padding: 0;
+        gap: 0.8rem;
+    }
+
+    .mini-player__btn {
+        font-size: 1.2rem;
+        margin: 0;
+    }
+
+    .bar-track {
+        max-width: 100%;
+    }
+}
+
+

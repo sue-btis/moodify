@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
     FaPlay,
     FaPause,
@@ -12,7 +12,6 @@ const MiniPlayer = () => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [progressMs, setProgressMs] = useState(0);
     const [durationMs, setDurationMs] = useState(0);
-    const intervalRef = useRef(null);
 
     const fetchCurrent = async () => {
         try {
@@ -20,13 +19,14 @@ const MiniPlayer = () => {
                 credentials: "include",
             });
             if (!res.ok) return;
+
             const data = await res.json();
             setTrack(data.item);
             setIsPlaying(data.is_playing);
-            setProgressMs(data.progress_ms);
-            setDurationMs(data.item?.duration_ms);
+            setProgressMs(data.progress_ms || 0);
+            setDurationMs(data.item?.duration_ms || 0);
         } catch (e) {
-            console.error("Error al obtener reproducción actual", e);
+            console.error("Error to get actual track", e);
         }
     };
 
@@ -37,8 +37,9 @@ const MiniPlayer = () => {
                 credentials: "include",
             });
             setIsPlaying(!isPlaying);
+            setTimeout(fetchCurrent, 800);
         } catch (e) {
-            console.error("Error al cambiar estado de reproducción", e);
+            console.error("Error to toggle playback", e);
         }
     };
 
@@ -66,34 +67,49 @@ const MiniPlayer = () => {
 
     useEffect(() => {
         fetchCurrent();
-        intervalRef.current = setInterval(() => {
-            setProgressMs(prev => (isPlaying ? prev + 1000 : prev));
+
+        const syncInterval = setInterval(fetchCurrent, 5000);
+        const progressInterval = setInterval(() => {
+            setProgressMs(prev => {
+                if (!isPlaying || !track) return prev;
+                return Math.min(prev + 1000, durationMs);
+            });
         }, 1000);
-        return () => clearInterval(intervalRef.current);
-    }, [isPlaying]);
 
-    if (!track) return null;
+        return () => {
+            clearInterval(syncInterval);
+            clearInterval(progressInterval);
+        };
+    }, [isPlaying, track, durationMs]);
 
-    const progressPercent = (progressMs / durationMs) * 100;
+    const progressPercent = durationMs > 0 ? (progressMs / durationMs) * 100 : 0;
 
     return (
         <div className="mini-player">
-            <img src={track.album.images[0].url} alt="cover" className="mini-player__cover" />
-            <div className="mini-player__info">
-                <div className="mini-player__meta">
-                    <strong className="mini-player__title">{track.name}</strong>
-                    <small className="mini-player__artist">
-                        {track.artists.map((a) => a.name).join(", ")}
-                    </small>
-                </div>
-                <div className="mini-player__progress-bar">
-                    <span>{formatTime(progressMs)}</span>
-                    <div className="bar-track">
-                        <div className="bar-fill" style={{ width: `${progressPercent}%` }} />
+            {track ? (
+                <>
+                    <img src={track.album.images[0].url} alt="cover" className="mini-player__cover" />
+                    <div className="mini-player__info">
+                        <div className="mini-player__meta">
+                            <strong className="mini-player__title">{track.name}</strong>
+                            <small className="mini-player__artist">
+                                {track.artists.map((a) => a.name).join(", ")}
+                            </small>
+                        </div>
+                        <div className="mini-player__progress-bar">
+                            <span>{formatTime(progressMs)}</span>
+                            <div className="bar-track">
+                                <div className="bar-fill" style={{ width: `${progressPercent}%` }} />
+                            </div>
+                            <span>{formatTime(durationMs)}</span>
+                        </div>
                     </div>
-                    <span>{formatTime(durationMs)}</span>
+                </>
+            ) : (
+                <div className="mini-player__info mini-player__empty">
+                    <em>No dispositive connected</em>
                 </div>
-            </div>
+            )}
             <div className="mini-player__controls">
                 <button className="mini-player__btn" onClick={skipPrevious}><FaStepBackward /></button>
                 <button className="mini-player__btn" onClick={togglePlayback}>

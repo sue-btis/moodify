@@ -3,6 +3,7 @@
     height: 100vh;
     background-color: #121212;
     color: white;
+    overflow: hidden;
 }
 
 .home__main {
@@ -71,9 +72,13 @@
     width: 100%;
     margin-top: 2rem;
     display: flex;
-    flex-direction: column;
-    gap: 2rem;
-}
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: center;
+    padding-bottom: 100px; }
+
+
+
 
 .loader {
     border: 6px solid #333;
@@ -85,6 +90,71 @@
     margin: 2rem auto;
 }
 
+.user-profile {
+    position: absolute;
+    top: 1rem;
+    right: 2rem;
+    cursor: pointer;
+    z-index: 9999;
+}
+
+.user-profile img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #1db954;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 3.5rem;
+    right: 0;
+    background-color: #222;
+    border: 1px solid #444;
+    border-radius: 6px;
+    padding: 0.5rem;
+    box-shadow: 0 0 6px rgba(0,0,0,0.4);
+}
+
+.dropdown-menu button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.dropdown-menu button:hover {
+    color: #1db954;
+}
+
+.load-more-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+}
+.load-more-btn {
+    background-color: #787883;
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 999px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.load-more-btn:hover {
+    background-color: #1ed760;
+}
+
+
+
+
 @keyframes spin {
     0% {
         transform: rotate(0deg);
@@ -93,3 +163,81 @@
         transform: rotate(360deg);
     }
 }
+
+@media (max-width: 930px) {
+
+    .home__title {
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+        max-width: 300px;
+    }
+
+}
+
+@media (max-width: 700px) {
+    .home__title {
+        font-size: 1.4rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .search-tabs button {
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+    }
+
+    .home__content {
+        margin-top: 1.5rem;
+        gap: 1.5rem;
+    }
+
+    .user-profile {
+        top: 1rem;
+        right: 1rem;
+        width: 36px;
+        height: 36px;
+    }
+
+    .user-profile img {
+        width: 100%;
+        height: 100%;
+    }
+
+    .dropdown-menu {
+        top: 3.2rem;
+        right: 0;
+        min-width: 120px;
+    }
+
+    .dropdown-menu button {
+        font-size: 0.85rem;
+    }
+
+    .loader {
+        width: 30px;
+        height: 30px;
+        border-width: 5px;
+    }
+
+    .sidebar {
+        display: none;
+    }
+
+    .sidebar--open {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 80%;
+        background-color: #191414;
+        z-index: 1002;
+    }
+    @media (max-width: 410px) {
+
+        .home__title {
+            margin-top: 2rem;
+        }
+
+    }
+}
+

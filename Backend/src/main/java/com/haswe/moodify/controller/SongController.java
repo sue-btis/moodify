@@ -31,7 +31,7 @@ public class SongController {
     public Mono<List<Song>> searchSongs(
             OAuth2AuthenticationToken authentication,
             @RequestParam("q") String searchQuery,
-            @RequestParam("type") String searchType // Esperado: "song" o "playlist"
+            @RequestParam("type") String searchType
     ) {
         OAuth2AuthorizeRequest authorizeRequest = OAuth2AuthorizeRequest
                 .withClientRegistrationId("spotify")

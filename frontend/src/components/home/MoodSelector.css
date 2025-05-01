@@ -38,3 +38,26 @@
     margin-top: 0.5rem;
     font-weight: 500;
 }
+@media (max-width: 780px) {
+    .emotion-selector {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.75rem;
+    }
+
+    .emotion-selector__card {
+        width: 100px;
+        height: 100px;
+        padding: 0.8rem;
+    }
+
+    .emotion-selector__emoji {
+        font-size: 2rem;
+    }
+
+    .emotion-selector__label {
+        font-size: 0.85rem;
+        margin-top: 0.3rem;
+    }
+}
+
